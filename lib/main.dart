@@ -18,8 +18,11 @@ class _HomeState extends State<Home> {
       appBar: AppBar(
         title: Text(
           "Lista de Tarefas",
-          style: TextStyle(color: Colors.white),
+          style: TextStyle(
+            color: Colors.white,
+          ),
         ),
+        centerTitle: true,
         backgroundColor: Colors.blueGrey,
       ),
     );
