@@ -1,4 +1,8 @@
+import 'dart:async';
+import 'dart:convert';
+import 'dart:io';
 import 'package:flutter/material.dart';
+import 'package:path_provider/path_provider.dart';
 
 void main() {
   runApp(MaterialApp(
@@ -12,6 +16,10 @@ class Home extends StatefulWidget {
 }
 
 class _HomeState extends State<Home> {
+  List _toDoList = [];
+
+  
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -25,6 +33,67 @@ class _HomeState extends State<Home> {
         centerTitle: true,
         backgroundColor: Colors.blueGrey,
       ),
+      body: Column(
+        children: <Widget>[
+          Container(
+            padding: EdgeInsets.fromLTRB(17.0, 1.0, 7.0, 1.0),
+            child: Row(
+              children: <Widget>[
+                Expanded(
+                    child: TextField(
+                  decoration: InputDecoration(
+                    labelText: "Nova Tarefa",
+                    labelStyle: TextStyle(color: Colors.blueAccent),
+                    hintText: "Escreva uma nova tarefa",
+                  ),
+                )),
+                RaisedButton(
+                  color: Colors.blueAccent,
+                  child: Text("Adicionar"),
+                  textColor: Colors.white,
+                  onPressed: () {},
+                ),
+              ],
+            ),
+          ),
+          Expanded(
+            child: ListView.builder(
+              padding: EdgeInsets.only(top: 10.0),
+              itemCount: _toDoList.length,
+              itemBuilder: (context, index) {
+                return CheckboxListTile(
+                  title: Text(_toDoList[index]["title"]),
+                  value: _toDoList[index]["ok"],
+                  secondary: CircleAvatar(
+                    child: Icon(
+                        _toDoList[index]["ok"] ? Icons.check : Icons.error),
+                  ),
+                );
+              },
+            ),
+          )
+        ],
+      ),
     );
+  }
+
+  Future<File> _getFile() async {
+    final directory = await getApplicationDocumentsDirectory();
+    return File("${directory.path}/data.json");
+  }
+
+  Future<File> _saveFile() async {
+    String data = json.encode(_toDoList);
+    final file = await _getFile();
+    return file.writeAsString(data);
+  }
+
+  Future<String> _readData() async {
+    try {
+      final file = await _getFile();
+      return file.readAsString();
+    } catch (e) {
+      return null;
+    }
   }
 }
